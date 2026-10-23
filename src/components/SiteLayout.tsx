@@ -3,11 +3,10 @@ import { Mail, MapPin, Clock, Waves } from "lucide-react";
 import type { ReactNode } from "react";
 
 const NAV = [
-  { to: "/", label: "Accueil" },
-  { to: "/archives", label: "Archives océanographiques" },
-  { to: "/comparaisons", label: "Comparaisons" },
-  { to: "/bibliotheque", label: "Bibliothèque scientifique" },
-  { to: "/sources", label: "Sources" },
+  { tab: "archives", label: "Données & séries" },
+  { tab: "comparaisons", label: "Comparateur" },
+  { tab: "bibliotheque", label: "Bibliothèque" },
+  { tab: "sources", label: "Sources & flux" },
 ] as const;
 
 export function SiteHeader() {
@@ -23,9 +22,11 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-6 lg:flex">
           {NAV.map((n) => (
             <Link
-              key={n.to}
-              to={n.to}
-              activeOptions={{ exact: n.to === "/" }}
+              key={n.tab}
+              to="/"
+              search={{ tab: n.tab }}
+              hash="tableau"
+              activeOptions={{ includeSearch: true }}
               className="border-b-2 border-transparent py-1 text-sm font-bold text-foreground hover:text-primary"
               activeProps={{ className: "border-primary text-primary" }}
             >
@@ -36,7 +37,7 @@ export function SiteHeader() {
       </div>
       <nav className="flex gap-4 overflow-x-auto px-4 pb-2 lg:hidden">
         {NAV.map((n) => (
-          <Link key={n.to} to={n.to} className="whitespace-nowrap text-sm font-semibold" activeProps={{ className: "text-primary" }} activeOptions={{ exact: n.to === "/" }}>
+          <Link key={n.tab} to="/" search={{ tab: n.tab }} hash="tableau" className="whitespace-nowrap text-sm font-semibold" activeProps={{ className: "text-primary" }} activeOptions={{ includeSearch: true }}>
             {n.label}
           </Link>
         ))}
