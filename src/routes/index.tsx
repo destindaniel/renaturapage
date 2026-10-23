@@ -10,6 +10,9 @@ const TABS = ["archives", "comparaisons", "bibliotheque", "sources"] as const;
 type Tab = (typeof TABS)[number];
 import { Database, Layers, CalendarRange, Radio, Thermometer, Waves, BookOpen } from "lucide-react";
 import hero from "@/assets/hero-ocean.jpg";
+import temperatureImage from "@/assets/theme-temperature.jpg";
+import archivesImage from "@/assets/theme-archives.jpg";
+import libraryImage from "@/assets/theme-library.jpg";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, DATASETS } from "@/lib/catalog";
 
@@ -86,16 +89,19 @@ function Index() {
         <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Explorer par thème</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {[
-            { icon: Thermometer, t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "comparaisons" as const, tag: "Données réelles" },
-            { icon: Waves, t: "Archives océanographiques", d: "15 produits : vagues, salinité, Argo, satellite…", to: "archives" as const, tag: "Catalogue" },
-            { icon: BookOpen, t: "Publications scientifiques", d: "Articles sur le Congo et le golfe de Guinée", to: "bibliotheque" as const, tag: "OpenAlex" },
+            { icon: Thermometer, image: temperatureImage, alt: "Illustration d’un instrument de mesure océanographique en mer", t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "comparaisons" as const, tag: "Données réelles" },
+            { icon: Waves, image: archivesImage, alt: "Illustration d’un flotteur océanographique à la surface de l’océan", t: "Archives océanographiques", d: "15 produits : vagues, salinité, Argo, satellite…", to: "archives" as const, tag: "Catalogue" },
+            { icon: BookOpen, image: libraryImage, alt: "Illustration de publications et d’un microscope de recherche marine", t: "Publications scientifiques", d: "Articles sur le Congo et le golfe de Guinée", to: "bibliotheque" as const, tag: "OpenAlex" },
           ].map((c) => (
-            <button type="button" key={c.t} onClick={() => go(c.to)} className="panel block p-5 text-left transition hover:-translate-y-0.5">
+            <Button type="button" variant="ghost" key={c.t} onClick={() => go(c.to)} className="panel block h-full overflow-hidden p-0 text-left whitespace-normal transition hover:-translate-y-0.5 hover:bg-card">
+              <img src={c.image} alt={c.alt} loading="lazy" width={1088} height={608} className="aspect-video w-full object-cover" />
+              <div className="p-5">
               <c.icon className="h-8 w-8 text-primary" />
               <h3 className="mt-3 text-lg font-bold">{c.t}</h3>
               <p className="text-sm text-muted-foreground">{c.d}</p>
               <span className="mt-3 inline-block rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">{c.tag}</span>
-            </button>
+              </div>
+            </Button>
           ))}
         </div>
       </section>
