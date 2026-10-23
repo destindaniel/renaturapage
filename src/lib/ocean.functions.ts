@@ -118,7 +118,7 @@ export const searchLiterature = createServerFn({ method: "GET" })
     }).parse(d),
   )
   .handler(async ({ data }): Promise<LitResult> => {
-    const url = buildLiteratureUrl(data, process.env.OPENALEX_API_KEY);
+    const url = buildLiteratureUrl(data, process.env["OPENALEX_API_KEY"]);
     try {
       const res = await fetch(url, { headers: UA });
       if (!res.ok) return { works: [], count: 0, error: `OpenAlex a répondu ${res.status}` };
