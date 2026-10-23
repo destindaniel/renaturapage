@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   validateSearch: (search: Record<string, unknown>): { tab?: string } =>
-    typeof search.tab === "string" ? { tab: search.tab } : {},
+    typeof search["tab"] === "string" ? { tab: search["tab"] } : {},
   component: Index,
 });
 
