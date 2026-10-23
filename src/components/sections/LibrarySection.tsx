@@ -5,8 +5,17 @@ import { PageShell } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CURRENT_YEAR } from "@/lib/catalog";
-import { searchLiterature, type Work } from "@/lib/ocean.functions";
+import { searchLiterature } from "@/lib/ocean.functions";
+import { searchLiteratureInBrowser, type LitQuery, type Work } from "@/lib/openalex";
 
+// Browser first (visitor's own OpenAlex quota), server as fallback.
+async function fetchLiterature(f: LitQuery) {
+  try {
+    const r = await searchLiteratureInBrowser(f);
+    if (!r.error) return r;
+  } catch { /* network/CORS: fall back to server */ }
+  return searchLiterature({ data: f });
+}
 
 const THEMES = ["", "upwelling", "fisheries", "sea surface temperature", "Congo river plume", "mangrove", "marine turtles", "oil pollution", "coastal erosion", "plankton"];
 const DEFAULT = { q: "", theme: "", fromYear: 1950, toYear: CURRENT_YEAR, oaOnly: false, type: "", page: 1 };
@@ -15,7 +24,7 @@ const sel = "h-9 rounded-md border border-input bg-card px-2 text-sm";
 export function Library() {
   const [draft, setDraft] = useState("");
   const [f, setF] = useState(DEFAULT);
-  const q = useQuery({ queryKey: ["lit", f], queryFn: () => searchLiterature({ data: f }), staleTime: 600_000, placeholderData: keepPreviousData });
+  const q = useQuery({ queryKey: ["lit", f], queryFn: () => fetchLiterature(f), staleTime: 600_000, placeholderData: keepPreviousData });
 
   return (
     <PageShell title="Bibliothèque scientifique" subtitle="Publications sur Pointe-Noire, le Congo, l'Afrique centrale et le golfe de Guinée (catalogue OpenAlex). Les PDF ne sont proposés que lorsqu'une version en accès libre est référencée.">
