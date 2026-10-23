@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { buildLiteratureUrl, parseWorks, type LitResult } from "./openalex";
 
 const UA = { "User-Agent": "RenaturOcean/1.0 (contact@renatura.cg)" };
 const ERDDAP_NOAA = "https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5.csv";
@@ -102,18 +103,7 @@ export const getArgoProfiles = createServerFn({ method: "GET" })
   });
 
 // ---- Literature (OpenAlex) ----
-export interface Work {
-  id: string; title: string; year: number | null; authors: string[]; doi: string | null; language: string | null;
-  type: string | null; source: string | null; abstract: string | null; landing: string | null; pdf: string | null;
-  isOa: boolean; license: string | null; concepts: string[];
-}
-
-function rebuildAbstract(inv?: Record<string, number[]> | null): string | null {
-  if (!inv) return null;
-  const words: string[] = [];
-  for (const [w, pos] of Object.entries(inv)) for (const p of pos) words[p] = w;
-  return words.join(" ");
-}
+export type { Work } from "./openalex";
 
 export const searchLiterature = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
@@ -127,39 +117,14 @@ export const searchLiterature = createServerFn({ method: "GET" })
       page: z.number().int().min(1).max(50),
     }).parse(d),
   )
-  .handler(async ({ data }) => {
-    const terms = [data.q || "ocean", data.theme, "Congo OR \"Gulf of Guinea\" OR \"Pointe-Noire\""].filter(Boolean).join(" ");
-    const filters = [`publication_year:${data.fromYear}-${data.toYear}`];
-    if (data.oaOnly) filters.push("is_oa:true");
-    if (data.type) filters.push(`type:${data.type}`);
-    const url = `https://api.openalex.org/works?search=${encodeURIComponent(terms)}&filter=${filters.join(",")}&per-page=20&page=${data.page}&sort=relevance_score:desc&mailto=contact@renatura.cg`;
+  .handler(async ({ data }): Promise<LitResult> => {
+    const url = buildLiteratureUrl(data, process.env["OPENALEX_API_KEY"]);
     try {
       const res = await fetch(url, { headers: UA });
-      if (!res.ok) return { works: [] as Work[], count: 0, error: `OpenAlex a répondu ${res.status}` };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const j: any = await res.json();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const works: Work[] = (j.results ?? []).map((w: any) => ({
-        id: w.id,
-        title: w.title ?? w.display_name ?? "(sans titre)",
-        year: w.publication_year ?? null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        authors: (w.authorships ?? []).slice(0, 6).map((a: any) => a.author?.display_name).filter(Boolean),
-        doi: w.doi ?? null,
-        language: w.language ?? null,
-        type: w.type ?? null,
-        source: w.primary_location?.source?.display_name ?? null,
-        abstract: rebuildAbstract(w.abstract_inverted_index),
-        landing: w.primary_location?.landing_page_url ?? w.doi ?? null,
-        pdf: w.best_oa_location?.pdf_url ?? null,
-        isOa: Boolean(w.open_access?.is_oa),
-        license: w.best_oa_location?.license ?? null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        concepts: (w.topics ?? []).slice(0, 3).map((c: any) => c.display_name),
-      }));
-      return { works, count: j.meta?.count ?? 0 };
+      if (!res.ok) return { works: [], count: 0, error: `OpenAlex a répondu ${res.status}` };
+      return parseWorks(await res.json());
     } catch {
-      return { works: [] as Work[], count: 0, error: "OpenAlex injoignable" };
+      return { works: [], count: 0, error: "OpenAlex injoignable" };
     }
   });
 
