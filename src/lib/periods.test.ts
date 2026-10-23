@@ -7,12 +7,12 @@ describe("comparePeriods", () => {
   it("computes anomaly against the 1991–2020 baseline", () => {
     const { rows, baseline } = comparePeriods(pts, [{ from: 1950, to: 1979 }]);
     expect(baseline).toBe(27);
-    expect(rows[0].anomaly).toBe(-1);
+    expect(rows[0]?.anomaly).toBe(-1);
   });
   it("never fills missing years", () => {
     const { rows } = comparePeriods(pts, [{ from: 2021, to: 2025 }]);
-    expect(rows[0].mean).toBeNull();
-    expect(rows[0].years).toBe(0);
+    expect(rows[0]?.mean).toBeNull();
+    expect(rows[0]?.years).toBe(0);
   });
 });
 

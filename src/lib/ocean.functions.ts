@@ -48,7 +48,7 @@ export const getSstSeries = createServerFn({ method: "GET" })
       }
       if (!res.ok) return { ...base, points: [], missingYears: [], error: `NOAA ERDDAP a répondu ${res.status}` };
       const lines = (await res.text()).trim().split("\n").slice(2);
-      const rows = lines.map((l) => { const c = l.split(","); return { t: c[0], v: Number(c[4]) }; });
+      const rows = lines.map((l) => { const c = l.split(","); return { t: c[0] ?? "", v: Number(c[4]) }; });
       const { points, missing } = annualize(rows, start, end);
       return { ...base, points, missingYears: missing };
     } catch (e) {
@@ -93,7 +93,7 @@ export const getArgoProfiles = createServerFn({ method: "GET" })
       if (res.status === 404) return { profiles: [] as ArgoProfile[], total: 0, query: plain };
       if (!res.ok) return { profiles: [] as ArgoProfile[], total: 0, query: plain, error: `Ifremer ERDDAP a répondu ${res.status}` };
       const lines = (await res.text()).trim().split("\n").slice(2);
-      const all = lines.map((l) => { const c = l.split(","); return { platform: c[0], time: c[1], lat: Number(c[2]), lon: Number(c[3]) }; });
+      const all = lines.map((l) => { const c = l.split(","); return { platform: c[0] ?? "", time: c[1] ?? "", lat: Number(c[2]), lon: Number(c[3]) }; });
       all.sort((a, b) => b.time.localeCompare(a.time));
       return { profiles: all.slice(0, 200), total: all.length, query: plain };
     } catch {

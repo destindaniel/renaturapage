@@ -28,7 +28,7 @@ export function SeriesChart({ data, baseline }: { data: SeriesResult; baseline?:
       <dl className="mt-3 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
         <div><dt className="inline font-bold">Source : </dt><dd className="inline">{data.source}</dd></div>
         <div><dt className="inline font-bold">Méthode : </dt><dd className="inline">{data.method}</dd></div>
-        <div><dt className="inline font-bold">Période : </dt><dd className="inline">{pts[0].year} – {pts[pts.length - 1].year} ({data.units})</dd></div>
+        <div><dt className="inline font-bold">Période : </dt><dd className="inline">{pts[0]?.year} – {pts[pts.length - 1]?.year} ({data.units})</dd></div>
         <div><dt className="inline font-bold">Années manquantes : </dt><dd className="inline">{data.missingYears.length ? data.missingYears.slice(0, 12).join(", ") + (data.missingYears.length > 12 ? "…" : "") : "aucune"}</dd></div>
       </dl>
     </div>
