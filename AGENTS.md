@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Ocean data: live provider calls live only in src/lib/ocean.functions.ts (server functions); the dataset catalogue in src/lib/catalog.ts holds real provider metadata only — never invent values or fill gaps.
+- Single-page dashboard: all modules live in src/components/sections and render as tabs on "/" (?tab=...); old routes only redirect there, so new modules go in a section + tab, not a new page.

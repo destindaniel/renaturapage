@@ -1,4 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { BarChart3, Satellite } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Archives } from "@/components/sections/ArchivesSection";
+import { Compare } from "@/components/sections/CompareSection";
+import { Library } from "@/components/sections/LibrarySection";
+import { Sources } from "@/components/sections/SourcesSection";
+
+const TABS = ["archives", "comparaisons", "bibliotheque", "sources"] as const;
+type Tab = (typeof TABS)[number];
 import { Database, Layers, CalendarRange, Radio, Thermometer, Waves, BookOpen } from "lucide-react";
 import hero from "@/assets/hero-ocean.jpg";
 import { Button } from "@/components/ui/button";
@@ -11,12 +20,23 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Archives, surveillance et bibliothèque océanographique pour Pointe-Noire et le golfe de Guinée." },
       { property: "og:title", content: "Renatur Océan — Données marines du Congo" },
       { property: "og:description", content: "Archives océanographiques depuis 1950, sources scientifiques et bibliothèque pour Pointe-Noire." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>): { tab?: string } =>
+    typeof search["tab"] === "string" ? { tab: search["tab"] } : {},
   component: Index,
 });
 
 function Index() {
+  const { tab: raw } = Route.useSearch();
+  const tab: Tab = (TABS as readonly string[]).includes(raw ?? "") ? (raw as Tab) : "archives";
+  const navigate = Route.useNavigate();
+  const go = (t: Tab) => {
+    navigate({ search: { tab: t }, replace: true, resetScroll: false });
+    document.getElementById("tableau")?.scrollIntoView({ behavior: "smooth" });
+  };
   const live = DATASETS.filter((d) => d.live).length;
   const stats = [
     { icon: Database, label: "Jeux de données catalogués", value: DATASETS.length, note: `${live} interrogeables en direct` },
@@ -33,9 +53,9 @@ function Index() {
           <h1 className="max-w-2xl text-4xl font-extrabold leading-tight md:text-5xl">Centralisation des données marines du Congo</h1>
           <p className="mt-3 max-w-xl font-semibold opacity-90">Recherche, surveillance et archivage océanographique pour Pointe-Noire et le golfe de Guinée.</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild size="lg"><Link to="/archives">Explorer les données</Link></Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-              <Link to="/bibliotheque">Bibliothèque scientifique</Link>
+            <Button size="lg" onClick={() => go("archives")}>Explorer les données</Button>
+            <Button size="lg" variant="outline" onClick={() => go("bibliotheque")} className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
+              Bibliothèque scientifique
             </Button>
           </div>
         </div>
@@ -66,18 +86,35 @@ function Index() {
         <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Explorer par thème</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {[
-            { icon: Thermometer, t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "/comparaisons" as const, tag: "Données réelles" },
-            { icon: Waves, t: "Archives océanographiques", d: "15 produits : vagues, salinité, Argo, satellite…", to: "/archives" as const, tag: "Catalogue" },
-            { icon: BookOpen, t: "Publications scientifiques", d: "Articles sur le Congo et le golfe de Guinée", to: "/bibliotheque" as const, tag: "OpenAlex" },
+            { icon: Thermometer, t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "comparaisons" as const, tag: "Données réelles" },
+            { icon: Waves, t: "Archives océanographiques", d: "15 produits : vagues, salinité, Argo, satellite…", to: "archives" as const, tag: "Catalogue" },
+            { icon: BookOpen, t: "Publications scientifiques", d: "Articles sur le Congo et le golfe de Guinée", to: "bibliotheque" as const, tag: "OpenAlex" },
           ].map((c) => (
-            <Link key={c.t} to={c.to} className="panel block p-5 transition hover:-translate-y-0.5">
+            <button type="button" key={c.t} onClick={() => go(c.to)} className="panel block p-5 text-left transition hover:-translate-y-0.5">
               <c.icon className="h-8 w-8 text-primary" />
               <h3 className="mt-3 text-lg font-bold">{c.t}</h3>
               <p className="text-sm text-muted-foreground">{c.d}</p>
               <span className="mt-3 inline-block rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">{c.tag}</span>
-            </Link>
+            </button>
           ))}
         </div>
+      </section>
+
+      <section id="tableau" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12">
+        <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v }, replace: true, resetScroll: false })}>
+          <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-secondary p-1">
+            <TabsTrigger value="archives" className="gap-2 font-bold"><Database className="h-4 w-4" />Données & séries</TabsTrigger>
+            <TabsTrigger value="comparaisons" className="gap-2 font-bold"><BarChart3 className="h-4 w-4" />Comparateur</TabsTrigger>
+            <TabsTrigger value="bibliotheque" className="gap-2 font-bold"><BookOpen className="h-4 w-4" />Bibliothèque</TabsTrigger>
+            <TabsTrigger value="sources" className="gap-2 font-bold"><Satellite className="h-4 w-4" />Sources & flux</TabsTrigger>
+          </TabsList>
+          <div className="-mx-4">
+            <TabsContent value="archives"><Archives /></TabsContent>
+            <TabsContent value="comparaisons"><Compare /></TabsContent>
+            <TabsContent value="bibliotheque"><Library /></TabsContent>
+            <TabsContent value="sources"><Sources /></TabsContent>
+          </div>
+        </Tabs>
       </section>
     </main>
   );
