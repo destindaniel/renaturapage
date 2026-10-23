@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Ocean data: live provider calls live only in src/lib/ocean.functions.ts (server functions); the dataset catalogue in src/lib/catalog.ts holds real provider metadata only — never invent values or fill gaps.
