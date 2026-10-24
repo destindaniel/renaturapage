@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Mail, MapPin, Clock, Waves } from "lucide-react";
+import { Mail, MapPin, Clock } from "lucide-react";
 import type { ReactNode } from "react";
+import logo from "@/assets/renatura-congo-logo.jpg.asset.json";
 
 const NAV = [
   { tab: "archives", label: "Données & séries" },
@@ -13,11 +14,9 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-3">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-primary-foreground">
-            <Waves className="h-6 w-6" />
-          </span>
-          <span className="font-display text-2xl font-extrabold text-ocean-deep">Renatura</span>
+        <Link to="/" aria-label="Renatura Congo — Accueil" className="flex shrink-0 items-center gap-3">
+          <img src={logo.url} alt="Renatura Congo" width={88} height={88} className="h-20 w-20 object-contain" />
+          <span className="hidden border-l border-border pl-3 text-sm font-semibold text-muted-foreground sm:block">Recherche & surveillance<br />océanographique</span>
         </Link>
         <nav className="hidden items-center gap-6 lg:flex">
           {NAV.map((n) => (
@@ -51,7 +50,8 @@ export function SiteFooter() {
     <footer className="mt-16 bg-ocean-deep text-primary-foreground">
       <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 md:grid-cols-2">
         <div>
-          <h3 className="text-lg font-bold">Renatur Océan</h3>
+          <img src={logo.url} alt="Renatura Congo" width={88} height={88} className="mb-3 h-22 w-22 rounded-sm object-contain" />
+          <h3 className="text-lg font-bold">Renatura Congo</h3>
           <p className="mt-1 text-sm opacity-80">Plateforme de recherche, de surveillance et d'archivage océanographique — Pointe-Noire et golfe de Guinée.</p>
         </div>
         <div className="flex flex-wrap gap-5 text-sm opacity-90 md:justify-end">
