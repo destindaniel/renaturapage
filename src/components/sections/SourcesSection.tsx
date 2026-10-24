@@ -3,6 +3,13 @@ import { CheckCircle2, KeyRound, XCircle } from "lucide-react";
 import { PageShell } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { checkSources } from "@/lib/ocean.functions";
+import { BROWSER_PROBES, probeInBrowser } from "@/lib/browser-sources";
+
+async function runChecks() {
+  const r = await checkSources();
+  const tests = await Promise.all(r.tests.map((t) => (!t.ok && BROWSER_PROBES[t.name] ? probeInBrowser(t.name, BROWSER_PROBES[t.name]!) : t)));
+  return { ...r, tests };
+}
 
 
 const PENDING = [
@@ -11,7 +18,7 @@ const PENDING = [
 ];
 
 export function Sources() {
-  const q = useQuery({ queryKey: ["sources"], queryFn: () => checkSources(), staleTime: 60_000 });
+  const q = useQuery({ queryKey: ["sources"], queryFn: runChecks, staleTime: 60_000 });
   return (
     <PageShell title="État des sources" subtitle="Une source n'est affichée comme connectée qu'après un test réussi, effectué maintenant depuis le serveur.">
       <div className="panel p-4">
