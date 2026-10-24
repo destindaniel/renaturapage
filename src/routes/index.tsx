@@ -19,9 +19,9 @@ import { CATEGORIES, DATASETS } from "@/lib/catalog";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Renatur Océan — Données marines du Congo" },
+      { title: "Renatura Congo — Données marines du Congo" },
       { name: "description", content: "Archives, surveillance et bibliothèque océanographique pour Pointe-Noire et le golfe de Guinée." },
-      { property: "og:title", content: "Renatur Océan — Données marines du Congo" },
+      { property: "og:title", content: "Renatura Congo — Données marines du Congo" },
       { property: "og:description", content: "Archives océanographiques depuis 1950, sources scientifiques et bibliothèque pour Pointe-Noire." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
