@@ -5,7 +5,8 @@ import { PageShell } from "@/components/SiteLayout";
 import { SeriesChart } from "@/components/SeriesChart";
 import { Input } from "@/components/ui/input";
 import { CURRENT_YEAR, ZONES } from "@/lib/catalog";
-import { getSstSeries, getWaveSeries, type SeriesResult } from "@/lib/ocean.functions";
+import { getSstSeries, type SeriesResult } from "@/lib/ocean.functions";
+import { getWaves as getWaveSeries } from "@/lib/browser-sources";
 import { comparePeriods, DEFAULT_PERIODS, type Period } from "@/lib/periods";
 
 

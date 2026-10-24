@@ -10,7 +10,8 @@ import {
   CATEGORIES, CURRENT_YEAR, DATASETS, DEFAULT_FILTERS, SOURCES, TYPE_LABEL, ZONES,
   filterDatasets, type Dataset, type Filters, type ZoneKey,
 } from "@/lib/catalog";
-import { getArgoProfiles, getSstSeries, getWaveSeries } from "@/lib/ocean.functions";
+import { getArgoProfiles, getSstSeries } from "@/lib/ocean.functions";
+import { getWaves as getWaveSeries } from "@/lib/browser-sources";
 
 
 const sel = "h-9 rounded-md border border-input bg-card px-2 text-sm";
