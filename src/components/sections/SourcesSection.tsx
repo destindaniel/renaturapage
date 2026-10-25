@@ -13,7 +13,6 @@ async function runChecks() {
 
 
 const PENDING = [
-  { name: "Copernicus Marine Service", why: "Compte gratuit requis (identifiant + mot de passe) pour GLORYS, salinité, chlorophylle, pH, niveau de la mer." },
   { name: "Copernicus Data Space Ecosystem", why: "Compte gratuit requis pour les images Sentinel-1/2/3." },
 ];
 

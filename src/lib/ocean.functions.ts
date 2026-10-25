@@ -145,5 +145,26 @@ export const checkSources = createServerFn({ method: "GET" }).handler(async () =
     probe("Programme Argo (Ifremer)", "https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json"),
     probe("OpenAlex", "https://api.openalex.org/works?per-page=1&search=congo%20ocean"),
   ]);
+  // Copernicus Marine: real login against the official auth system (credentials stay server-side)
+  const cmems = async () => {
+    const name = "Copernicus Marine Service";
+    const t = Date.now();
+    const username = process.env["COPERNICUS_USERNAME"];
+    const password = process.env["COPERNICUS_PASSWORD"];
+    if (!username || !password) return { name, ok: false, status: 0, ms: 0 };
+    try {
+      const r = await fetch("https://auth.marine.copernicus.eu/realms/MIS/protocol/openid-connect/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ client_id: "toolbox", grant_type: "password", username, password, scope: "openid profile email" }),
+      });
+      if (!r.ok) console.error("Copernicus auth failed", r.status);
+      return { name, ok: r.ok, status: r.status, ms: Date.now() - t };
+    } catch (e) {
+      console.error("Copernicus auth error", e);
+      return { name, ok: false, status: 0, ms: Date.now() - t };
+    }
+  };
+  tests.push(await cmems());
   return { tests, checkedAt: new Date().toISOString() };
 });
