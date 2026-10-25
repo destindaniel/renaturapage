@@ -4,6 +4,9 @@ import type { SeriesResult } from "./ocean.functions";
 export async function seriesToPdf(title: string, s: SeriesResult, lat: number, lon: number, filename: string) {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const clean = (t: string) => t.replace(/√/g, "racine").replace(/≈/g, "~").replace(/[—–]/g, "-");
+  const rawText = doc.text.bind(doc);
+  doc.text = ((t: string | string[], ...rest: unknown[]) => (rawText as (...a: unknown[]) => unknown)(Array.isArray(t) ? t.map(clean) : clean(t), ...rest)) as typeof doc.text;
   const W = 210, M = 15;
   let y = 18;
   doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.setTextColor(20, 110, 115);
