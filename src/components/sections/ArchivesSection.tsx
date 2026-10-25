@@ -12,6 +12,8 @@ import {
 } from "@/lib/catalog";
 import { getArgoProfiles, getSstSeries } from "@/lib/ocean.functions";
 import { getWaves as getWaveSeries } from "@/lib/browser-sources";
+import { getCopernicusSeries } from "@/lib/copernicus";
+import { seriesToPdf } from "@/lib/series-pdf";
 
 
 const sel = "h-9 rounded-md border border-input bg-card px-2 text-sm";
@@ -130,7 +132,7 @@ function DatasetDetail({ d, lat, lon, start, end, bbox }: { d: Dataset; lat: num
         ))}
       </dl>
       <div className="rounded-md bg-warning/15 p-3 text-sm"><strong>Limites d'interprétation : </strong>{d.limits}</div>
-      {d.live === "ersst" || d.live === "waves" ? <LiveSeries kind={d.live} lat={lat} lon={lon} start={s} end={end} /> : null}
+      {d.live && d.live !== "argo" ? <LiveSeries kind={d.live} name={d.name} lat={lat} lon={lon} start={s} end={end} /> : null}
       {d.live === "argo" ? <ArgoList bbox={bbox} start={s} end={end} /> : null}
       {!d.live && <p className="text-sm text-muted-foreground">{d.access === "identifiants" ? "Ce produit nécessite un compte gratuit chez le fournisseur ; il n'est pas encore interrogé en direct par la plateforme." : "Les fichiers sont disponibles sur le portail officiel."}</p>}
       <div className="flex gap-2">
@@ -141,10 +143,10 @@ function DatasetDetail({ d, lat, lon, start, end, bbox }: { d: Dataset; lat: num
   );
 }
 
-function LiveSeries({ kind, lat, lon, start, end }: { kind: "ersst" | "waves"; lat: number; lon: number; start: number; end: number }) {
+function LiveSeries({ kind, name, lat, lon, start, end }: { kind: "ersst" | "waves" | "salinity" | "currents"; name: string; lat: number; lon: number; start: number; end: number }) {
   const q = useQuery({
     queryKey: [kind, lat, lon, start, end],
-    queryFn: () => (kind === "ersst" ? getSstSeries : getWaveSeries)({ data: { lat, lon, start, end } }),
+    queryFn: () => (kind === "salinity" || kind === "currents" ? getCopernicusSeries(kind, lat, lon, start, end) : (kind === "ersst" ? getSstSeries : getWaveSeries)({ data: { lat, lon, start, end } })),
     staleTime: 3600_000,
   });
   if (q.isLoading) return <p className="text-sm text-muted-foreground">Chargement de la série depuis la source officielle…</p>;
@@ -160,6 +162,7 @@ function LiveSeries({ kind, lat, lon, start, end }: { kind: "ersst" | "waves"; l
       <h3 className="font-bold">Série historique ({lat}°, {lon}°)</h3>
       <SeriesChart data={q.data} />
       {!q.data.error && <Button size="sm" variant="outline" onClick={csv}><Download className="h-4 w-4" />Télécharger la série (CSV)</Button>}
+      {!q.data.error && <Button size="sm" variant="outline" className="ml-2" onClick={() => seriesToPdf(name, q.data!, lat, lon, `${kind}_${lat}_${lon}_${start}-${end}.pdf`)}><Download className="h-4 w-4" />Télécharger en PDF</Button>}
     </div>
   );
 }

@@ -4,7 +4,7 @@
 
 export type DataType = "observation" | "satellite" | "reanalyse" | "modele" | "prevision";
 export type Access = "libre" | "identifiants";
-export type LiveKey = "ersst" | "waves" | "argo" | null;
+export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | null;
 
 export interface Dataset {
   id: string;
@@ -108,11 +108,23 @@ export const DATASETS: Dataset[] = [
     category: "Salinité",
     start: 1993, end: "présent", area: "Global", source: CMEMS,
     type: "reanalyse", units: "PSU", frequency: "Journalière / mensuelle", resolution: "1/12°", depth: "0–5 700 m",
-    quality: "contrôlée", access: "identifiants", live: null,
+    quality: "contrôlée", access: "libre", live: "salinity",
     url: "https://data.marine.copernicus.eu/product/GLOBAL_MULTIYEAR_PHY_001_030/description",
     updated: "Annuelle", description: "Salinité modélisée et assimilée — utile pour suivre le panache du fleuve Congo.",
-    limits: "Le panache du Congo est mal résolu près de l'embouchure. Compte Copernicus requis.",
+    limits: "Le panache du Congo est mal résolu près de l'embouchure. Série affichée : surface, 4 mois par an.",
     keywords: ["salinité", "panache", "fleuve congo"],
+  },
+  {
+    id: "cmems-glorys-currents",
+    name: "GLORYS12V1 — Courants",
+    category: "Courants marins",
+    start: 1993, end: "présent", area: "Global", source: CMEMS,
+    type: "reanalyse", units: "m/s", frequency: "Journalière / mensuelle", resolution: "1/12°", depth: "0–5 700 m",
+    quality: "contrôlée", access: "libre", live: "currents",
+    url: "https://data.marine.copernicus.eu/product/GLOBAL_MULTIYEAR_PHY_001_030/description",
+    updated: "Annuelle", description: "Composantes est (uo) et nord (vo) du courant, réanalyse avec assimilation de données.",
+    limits: "Vitesse calculée à partir des moyennes mensuelles : les courants ponctuels et les marées ne sont pas représentés. Série affichée : surface, 4 mois par an.",
+    keywords: ["courants", "réanalyse", "glorys"],
   },
   {
     id: "cmems-currents-nrt",
