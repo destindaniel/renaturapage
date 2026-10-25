@@ -45,7 +45,7 @@ function Index() {
     { icon: Database, label: "Jeux de données catalogués", value: DATASETS.length, note: `${live} interrogeables en direct` },
     { icon: Layers, label: "Catégories", value: CATEGORIES.length, note: "Physique, biogéochimie, satellite" },
     { icon: CalendarRange, label: "Archive la plus ancienne", value: "1950", note: "Début de recherche (ERSST dès 1854)" },
-    { icon: Radio, label: "Sources publiques connectées", value: 4, note: "NOAA · ERA5 · Argo · OpenAlex" },
+    { icon: Radio, label: "Sources publiques connectées", value: 5, note: "NOAA · ERA5 · Argo · Copernicus · OpenAlex" },
   ];
   return (
     <main>
