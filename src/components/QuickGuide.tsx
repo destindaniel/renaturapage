@@ -1,10 +1,43 @@
 import { useState } from "react";
 import { ChevronDown, Lightbulb, Search, LineChart, FileDown } from "lucide-react";
+import step1 from "@/assets/guide-step1.jpg";
+import step2 from "@/assets/guide-step2.jpg";
+import step3 from "@/assets/guide-step3.jpg";
 
 const STEPS = [
-  { icon: Search, t: "1. Choisir une donnée", d: "Dans « Données & séries », tapez un mot (température, salinité, vagues) puis cliquez sur « Consulter »." },
-  { icon: LineChart, t: "2. Lire la courbe", d: "La courbe montre l'évolution année par année au large de Pointe-Noire. Le « Comparateur » compare les périodes depuis 1950." },
-  { icon: FileDown, t: "3. Télécharger", d: "Exportez la série en PDF ou CSV. Dans « Bibliothèque », ouvrez les articles scientifiques en libre accès." },
+  {
+    icon: Search,
+    image: step1,
+    alt: "Illustration d'une personne qui cherche des données océaniques sur un ordinateur",
+    t: "1. Trouver une donnée",
+    how: [
+      "Cliquez sur l'onglet « Données & séries » plus bas.",
+      "Tapez un mot dans la recherche : température, salinité, vagues…",
+      "Cliquez sur « Consulter » à droite de la ligne choisie.",
+    ],
+  },
+  {
+    icon: LineChart,
+    image: step2,
+    alt: "Illustration d'une courbe qui monte au-dessus de l'océan à Pointe-Noire",
+    t: "2. Lire et comparer",
+    how: [
+      "La courbe montre la valeur de chaque année au large de Pointe-Noire.",
+      "Une courbe qui monte = l'océan se réchauffe ou change.",
+      "Dans « Comparateur », voyez la différence entre 1950 et aujourd'hui.",
+    ],
+  },
+  {
+    icon: FileDown,
+    image: step3,
+    alt: "Illustration d'un rapport PDF téléchargé depuis un ordinateur",
+    t: "3. Télécharger et lire",
+    how: [
+      "Dans la fenêtre d'une série, cliquez sur « PDF » ou « CSV ».",
+      "Le rapport contient la courbe, les valeurs et la source.",
+      "Dans « Bibliothèque », ouvrez les articles scientifiques gratuits.",
+    ],
+  },
 ];
 
 const WORDS = [
@@ -25,13 +58,22 @@ export function QuickGuide() {
           <ChevronDown className={`h-5 w-5 transition ${open ? "rotate-180" : ""}`} />
         </button>
         {open && (
-          <div className="space-y-5 px-5 pb-5">
+          <div className="space-y-6 px-5 pb-5">
             <div className="grid gap-4 md:grid-cols-3">
               {STEPS.map((s) => (
-                <div key={s.t} className="rounded-lg bg-secondary p-4">
-                  <s.icon className="h-6 w-6 text-primary" />
-                  <h3 className="mt-2 font-bold">{s.t}</h3>
-                  <p className="text-sm text-muted-foreground">{s.d}</p>
+                <div key={s.t} className="overflow-hidden rounded-lg border border-border bg-secondary">
+                  <img src={s.image} alt={s.alt} loading="lazy" width={1024} height={640} className="aspect-[16/10] w-full object-cover" />
+                  <div className="p-4">
+                    <h3 className="flex items-center gap-2 font-bold"><s.icon className="h-5 w-5 text-primary" />{s.t}</h3>
+                    <ol className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                      {s.how.map((h, i) => (
+                        <li key={h} className="flex gap-2">
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i + 1}</span>
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
                 </div>
               ))}
             </div>
