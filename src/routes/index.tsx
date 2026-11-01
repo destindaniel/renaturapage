@@ -5,6 +5,7 @@ import { Archives } from "@/components/sections/ArchivesSection";
 import { Compare } from "@/components/sections/CompareSection";
 import { Library } from "@/components/sections/LibrarySection";
 import { Sources } from "@/components/sections/SourcesSection";
+import { QuickGuide } from "@/components/QuickGuide";
 
 const TABS = ["archives", "comparaisons", "bibliotheque", "sources"] as const;
 type Tab = (typeof TABS)[number];
@@ -105,6 +106,8 @@ function Index() {
           ))}
         </div>
       </section>
+
+      <QuickGuide />
 
       <section id="tableau" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12">
         <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v }, replace: true, resetScroll: false })}>
