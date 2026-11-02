@@ -31,52 +31,18 @@ export function Archives() {
 
   return (
     <PageShell title="Archives océanographiques" subtitle="Recherche de 1950 à la dernière période disponible. Chaque produit affiche sa véritable première année : aucune valeur n'est inventée pour combler les lacunes.">
-      <div className="panel grid gap-3 p-4 md:grid-cols-4">
+      <div className="panel grid gap-3 p-4 md:grid-cols-2">
         <select className={sel} value={f.category} onChange={(e) => set("category", e.target.value)} aria-label="Catégorie">
           <option value="">Toutes catégories</option>
           {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
         </select>
-        <select className={sel} value={f.source} onChange={(e) => set("source", e.target.value)} aria-label="Source">
-          <option value="">Toutes sources</option>
-          {SOURCES.map((c) => <option key={c}>{c}</option>)}
-        </select>
-        <select className={sel} value={f.type} onChange={(e) => set("type", e.target.value)} aria-label="Type">
-          <option value="">Tous types</option>
-          {Object.entries(TYPE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-        </select>
-        <select className={sel} value={f.depth} onChange={(e) => set("depth", e.target.value as Filters["depth"])} aria-label="Profondeur">
-          <option value="">Toutes profondeurs</option><option value="surface">Surface uniquement</option><option value="profondeur">Colonne d'eau</option>
-        </select>
-        <select className={sel} value={f.quality} onChange={(e) => set("quality", e.target.value)} aria-label="Qualité">
-          <option value="">Toute qualité</option><option>contrôlée</option><option>temps quasi réel</option><option>préliminaire</option>
-        </select>
-        <select className={sel} value={f.access} onChange={(e) => set("access", e.target.value)} aria-label="Accès">
-          <option value="">Tout accès</option><option value="libre">Accès libre</option><option value="identifiants">Compte requis</option>
-        </select>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="font-bold">Du</span>
-          <Input type="number" min={1950} max={CURRENT_YEAR} value={f.start} onChange={(e) => set("start", Number(e.target.value) || 1950)} />
-          <span className="font-bold">au</span>
-          <Input type="number" min={1950} max={CURRENT_YEAR} value={f.end} onChange={(e) => set("end", Number(e.target.value) || CURRENT_YEAR)} />
-        </div>
-        <select className={sel} value={zone} onChange={(e) => setZone(e.target.value as ZoneKey)} aria-label="Zone">
-          {Object.entries(ZONES).map(([k, z]) => <option key={k} value={k}>{z.label}</option>)}
-          <option value="custom">Zone personnalisée</option>
-        </select>
-        {zone === "custom" && (
-          <div className="flex gap-2 md:col-span-2">
-            <Input type="number" step="0.1" value={custom.lat} onChange={(e) => setCustom({ ...custom, lat: Number(e.target.value) })} aria-label="Latitude" />
-            <Input type="number" step="0.1" value={custom.lon} onChange={(e) => setCustom({ ...custom, lon: Number(e.target.value) })} aria-label="Longitude" />
-          </div>
-        )}
-        <Button variant="outline" onClick={() => { setF(DEFAULT_FILTERS); setZone("pointe-noire"); }}><RotateCcw className="h-4 w-4" />Réinitialiser les filtres</Button>
+        <Button variant="outline" onClick={() => { setF(DEFAULT_FILTERS); setZone("pointe-noire"); }}><RotateCcw className="h-4 w-4" />Réinitialiser</Button>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
         <strong>{results.length} résultat{results.length > 1 ? "s" : ""}</strong>
-        <span className="text-muted-foreground">· périodes couvertes : {years} · zone : {zone === "custom" ? `${custom.lat}, ${custom.lon}` : ZONES[zone].label}</span>
-        {active.map((k) => <span key={k} className="rounded bg-secondary px-2 py-0.5 text-xs font-bold">{k} : {String(f[k])}</span>)}
-      </div>
+        <span className="text-muted-foreground">· périodes couvertes : {years}</span>
+              </div>
 
       {results.length === 0 ? (
         <div className="panel mt-4 p-8 text-center text-muted-foreground">Aucun jeu de données ne correspond à ces critères. Élargissez la période ou réinitialisez les filtres.</div>
