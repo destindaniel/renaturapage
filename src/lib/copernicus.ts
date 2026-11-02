@@ -17,9 +17,9 @@ function tile(lat: number, lon: number) {
   return { z, col, row, i: Math.floor(((x - col * deg) / deg) * 256), j: Math.floor(((y - row * deg) / deg) * 256) };
 }
 
-async function value(variable: string, lat: number, lon: number, time: string): Promise<number | null> {
+async function value(variable: string, lat: number, lon: number, time: string, layer?: string, elevation: string | null = SURFACE): Promise<number | null> {
   const t = tile(lat, lon);
-  const url = `${WMTS}?SERVICE=WMTS&REQUEST=GetFeatureInfo&VERSION=1.0.0&LAYER=${encodeURIComponent(`${DS}/${variable}`)}&STYLE=&TILEMATRIXSET=EPSG:4326&TILEMATRIX=${t.z}&TILEROW=${t.row}&TILECOL=${t.col}&I=${t.i}&J=${t.j}&INFOFORMAT=application/json&time=${time}T00:00:00Z&elevation=${SURFACE}`;
+  const url = `${WMTS}?SERVICE=WMTS&REQUEST=GetFeatureInfo&VERSION=1.0.0&LAYER=${encodeURIComponent(layer ?? `${DS}/${variable}`)}&STYLE=&TILEMATRIXSET=EPSG:4326&TILEMATRIX=${t.z}&TILEROW=${t.row}&TILECOL=${t.col}&I=${t.i}&J=${t.j}&INFOFORMAT=application/json&time=${time}T00:00:00Z${elevation ? `&elevation=${elevation}` : ""}`;
   try {
     const r = await fetch(url);
     if (!r.ok) return null;
@@ -38,7 +38,17 @@ async function pool<T>(jobs: (() => Promise<T>)[], size = 12): Promise<T[]> {
   return out;
 }
 
-export type CmemsKind = "salinity" | "currents" | "temperature";
+export type CmemsKind = "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph";
+
+// Other Copernicus Marine products read the same way (layer, surface level, coverage, units, method).
+const EXTRA: Record<"sealevel" | "chl" | "ph", { layer: string; elevation: string | null; first: number; months: string[]; units: string; source: string; method: string }> = {
+  sealevel: { layer: "SEALEVEL_GLO_PHY_L4_MY_008_047/cmems_obs-sl_glo_phy-ssh_my_allsat-l4-duacs-0.125deg_P1M-m_202411/sla", elevation: null, first: 1993, months: MONTHS, units: "m",
+    source: "Copernicus Marine — SEALEVEL_GLO_PHY_L4_MY_008_047 (DUACS), moyennes mensuelles", method: "Anomalie du niveau de la mer (SLA, réf. 1993–2012), moyenne des mois de janvier, avril, juillet et octobre" },
+  chl: { layer: "OCEANCOLOUR_GLO_BGC_L4_MY_009_104/cmems_obs-oc_glo_bgc-plankton_my_l4-multi-4km_P1M_202603/CHL", elevation: null, first: 1997, months: ["01","02","03","04","05","06","07","08","09","10","11","12"], units: "mg/m³",
+    source: "Copernicus Marine — OCEANCOLOUR_GLO_BGC_L4_MY_009_104 (GlobColour 4 km), moyennes mensuelles", method: "Chlorophylle-a de surface, moyenne des 12 mois disponibles de chaque année (mois nuageux exclus)" },
+  ph: { layer: "GLOBAL_MULTIYEAR_BGC_001_029/cmems_mod_glo_bgc_my_0.25deg_P1M-m_202406/ph", elevation: "-0.5057600140571594", first: 1993, months: MONTHS, units: "pH",
+    source: "Copernicus Marine — GLOBAL_MULTIYEAR_BGC_001_029 (modèle PISCES), moyennes mensuelles", method: "pH de surface (≈0,5 m, valeur modélisée), moyenne des mois de janvier, avril, juillet et octobre" },
+};
 
 // Pre-computed real GLORYS values (same method as the live query) for the predefined zones, so charts open instantly.
 function cached(kind: CmemsKind, lat: number, lon: number, from: number, to: number): YearPoint[] | null {
@@ -50,8 +60,9 @@ function cached(kind: CmemsKind, lat: number, lon: number, from: number, to: num
 }
 
 export async function getCopernicusSeries(kind: CmemsKind, lat: number, lon: number, start: number, end: number): Promise<SeriesResult> {
-  const from = Math.max(FIRST_YEAR, start), to = Math.min(LAST_YEAR, end);
-  const base = {
+  const ex = kind === "sealevel" || kind === "chl" || kind === "ph" ? EXTRA[kind] : null;
+  const from = Math.max(ex?.first ?? FIRST_YEAR, start), to = Math.min(LAST_YEAR, end);
+  const base = ex ? { units: ex.units, source: ex.source, method: ex.method, query: `${WMTS} · ${ex.layer} · ${lat}°, ${lon}°` } : {
     units: kind === "salinity" ? "PSU" : kind === "temperature" ? "°C" : "m/s",
     source: "Copernicus Marine — GLORYS12V1 (GLOBAL_MULTIYEAR_PHY_001_030), moyennes mensuelles",
     method: kind === "temperature"
@@ -61,15 +72,19 @@ export async function getCopernicusSeries(kind: CmemsKind, lat: number, lon: num
       : "Vitesse du courant de surface √(u²+v²) (≈0,5 m), moyenne des mois de janvier, avril, juillet et octobre",
     query: `${WMTS} · ${DS} · ${lat}°, ${lon}°`,
   };
-  if (from > to) return { ...base, points: [], missingYears: [], error: "GLORYS12 couvre 1993–2025 uniquement" };
+  if (from > to) return { ...base, points: [], missingYears: [], error: `Ce produit couvre ${ex?.first ?? FIRST_YEAR}–${LAST_YEAR} uniquement` };
   const pre = cached(kind, lat, lon, from, to);
+  if (pre && pre.length === to - from + 1 && !pre.some((p) => p.value !== null)) {
+    return { ...base, points: pre, missingYears: pre.map((p) => p.year), error: "Aucune valeur valide en ce point : il est masqué comme côte ou nuages par le produit. Choisissez la zone « côte du Congo » ou « golfe de Guinée »." };
+  }
   if (pre && pre.length === to - from + 1) {
     return { ...base, source: base.source + " — valeurs extraites et enregistrées le " + (cache as { generated: string }).generated, points: pre, missingYears: pre.filter((p) => p.value === null).map((p) => p.year) };
   }
   const slots: { y: number; m: string }[] = [];
-  for (let y = from; y <= to; y++) for (const m of MONTHS) slots.push({ y, m });
+  for (let y = from; y <= to; y++) for (const m of ex?.months ?? MONTHS) slots.push({ y, m });
   const vals = await pool(slots.map((s) => async () => {
     const t = `${s.y}-${s.m}-01`;
+    if (ex) return value("", lat, lon, t, ex.layer, ex.elevation);
     if (kind !== "currents") return value(kind === "salinity" ? "so" : "thetao", lat, lon, t);
     const [u, v] = await Promise.all([value("uo", lat, lon, t), value("vo", lat, lon, t)]);
     return u === null || v === null ? null : Math.hypot(u, v);

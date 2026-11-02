@@ -4,7 +4,7 @@
 
 export type DataType = "observation" | "satellite" | "reanalyse" | "modele" | "prevision";
 export type Access = "libre" | "identifiants";
-export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | "temperature" | null;
+export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph" | null;
 
 export interface Dataset {
   id: string;
@@ -157,7 +157,7 @@ export const DATASETS: Dataset[] = [
     category: "Niveau de la mer",
     start: 1993, end: "présent", area: "Global", source: CMEMS,
     type: "satellite", units: "m", frequency: "Journalière", resolution: "0,125°", depth: "Surface",
-    quality: "contrôlée", access: "identifiants", live: null,
+    quality: "contrôlée", access: "identifiants", live: "sealevel",
     url: "https://data.marine.copernicus.eu/product/SEALEVEL_GLO_PHY_L4_MY_008_047/description",
     updated: "Annuelle + NRT", description: "Anomalies de hauteur de mer issues des altimètres satellitaires multi-missions.",
     limits: "Débute en 1993 (TOPEX/Poseidon). Peu fiable à moins de ~20 km de la côte.",
@@ -181,7 +181,7 @@ export const DATASETS: Dataset[] = [
     category: "Chlorophylle-a et biogéochimie",
     start: 1997, end: "présent", area: "Global", source: CMEMS,
     type: "satellite", units: "mg/m³", frequency: "Journalière / mensuelle", resolution: "4 km", depth: "Surface",
-    quality: "contrôlée", access: "identifiants", live: null,
+    quality: "contrôlée", access: "identifiants", live: "chl",
     url: "https://data.marine.copernicus.eu/product/OCEANCOLOUR_GLO_BGC_L4_MY_009_104/description",
     updated: "Quotidienne", description: "Fusion des capteurs SeaWiFS, MODIS, MERIS, VIIRS, OLCI.",
     limits: "Débute en septembre 1997 (SeaWiFS). Eaux côtières turbides (panache du Congo) : surestimation fréquente ; couverture nuageuse importante.",
@@ -193,7 +193,7 @@ export const DATASETS: Dataset[] = [
     category: "Acidification et pH",
     start: 1993, end: "présent", area: "Global", source: CMEMS,
     type: "modele", units: "pH, mol/m³", frequency: "Mensuelle", resolution: "0,25°", depth: "0–5 700 m",
-    quality: "contrôlée", access: "identifiants", live: null,
+    quality: "contrôlée", access: "identifiants", live: "ph",
     url: "https://data.marine.copernicus.eu/product/GLOBAL_MULTIYEAR_BGC_001_029/description",
     updated: "Annuelle", description: "Modèle PISCES : pH, DIC, alcalinité, oxygène, nutriments.",
     limits: "Valeurs modélisées : aucune série de mesure directe de pH n'est disponible publiquement pour Pointe-Noire.",
