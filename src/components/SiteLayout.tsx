@@ -3,12 +3,6 @@ import { Mail, MapPin, Clock } from "lucide-react";
 import type { ReactNode } from "react";
 import logo from "@/assets/renatura-congo-logo.jpg";
 
-const NAV = [
-  { tab: "archives", label: "Données & séries" },
-  { tab: "comparaisons", label: "Comparateur" },
-  { tab: "bibliotheque", label: "Bibliothèque" },
-  { tab: "sources", label: "Sources & flux" },
-] as const;
 
 export function SiteHeader() {
   return (
@@ -18,29 +12,7 @@ export function SiteHeader() {
           <img src={logo} alt="Renatura Congo" width={88} height={88} className="h-20 w-20 object-contain" />
           <span className="hidden border-l border-border pl-3 text-sm font-semibold text-muted-foreground sm:block">Recherche & surveillance<br />océanographique</span>
         </Link>
-        <nav className="hidden items-center gap-6 lg:flex">
-          {NAV.map((n) => (
-            <Link
-              key={n.tab}
-              to="/"
-              search={{ tab: n.tab }}
-              hash="tableau"
-              activeOptions={{ includeSearch: true }}
-              className="border-b-2 border-transparent py-1 text-sm font-bold text-foreground hover:text-primary"
-              activeProps={{ className: "border-primary text-primary" }}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
       </div>
-      <nav className="flex gap-4 overflow-x-auto px-4 pb-2 lg:hidden">
-        {NAV.map((n) => (
-          <Link key={n.tab} to="/" search={{ tab: n.tab }} hash="tableau" className="whitespace-nowrap text-sm font-semibold" activeProps={{ className: "text-primary" }} activeOptions={{ includeSearch: true }}>
-            {n.label}
-          </Link>
-        ))}
-      </nav>
     </header>
   );
 }
