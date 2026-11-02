@@ -65,26 +65,6 @@ function Index() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pt-8">
-        <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Tableau de bord — Vue générale</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="panel p-4">
-              <div className="flex items-center gap-2 text-sm font-bold"><s.icon className="h-4 w-4 text-primary" />{s.label}</div>
-              <div className="mt-1 font-display text-3xl font-extrabold text-ocean-deep">{s.value}</div>
-              <div className="text-xs text-muted-foreground">{s.note}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pt-10">
-        <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Carte — Côte du Congo (Pointe-Noire)</h2>
-        <p className="text-muted-foreground">Zone d'étude principale de la plateforme.</p>
-        <div className="panel mt-4 overflow-hidden">
-          <iframe title="Carte de Pointe-Noire" className="h-72 w-full" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=10.6%2C-5.6%2C12.6%2C-3.8&layer=mapnik&marker=-4.78%2C11.86" />
-        </div>
-      </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-10">
         <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Explorer par thème</h2>

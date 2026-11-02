@@ -32,10 +32,6 @@ export function Archives() {
   return (
     <PageShell title="Archives océanographiques" subtitle="Recherche de 1950 à la dernière période disponible. Chaque produit affiche sa véritable première année : aucune valeur n'est inventée pour combler les lacunes.">
       <div className="panel grid gap-3 p-4 md:grid-cols-4">
-        <label className="relative md:col-span-2">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input className="pl-8" placeholder="Mot-clé (ex. salinité, argo, houle)…" value={f.q} onChange={(e) => set("q", e.target.value)} />
-        </label>
         <select className={sel} value={f.category} onChange={(e) => set("category", e.target.value)} aria-label="Catégorie">
           <option value="">Toutes catégories</option>
           {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
