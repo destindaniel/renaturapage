@@ -3,12 +3,6 @@ import { Mail, MapPin, Clock } from "lucide-react";
 import type { ReactNode } from "react";
 import logo from "@/assets/renatura-congo-logo.jpg";
 
-const NAV = [
-  { tab: "archives", label: "Données & séries" },
-  { tab: "comparaisons", label: "Comparateur" },
-  { tab: "bibliotheque", label: "Bibliothèque" },
-  { tab: "sources", label: "Sources & flux" },
-] as const;
 
 export function SiteHeader() {
   return (

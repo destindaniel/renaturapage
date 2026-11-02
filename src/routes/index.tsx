@@ -15,7 +15,7 @@ import temperatureImage from "@/assets/theme-temperature.jpg";
 import archivesImage from "@/assets/theme-archives.jpg";
 import libraryImage from "@/assets/theme-library.jpg";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, DATASETS } from "@/lib/catalog";
+import { DATASETS } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,13 +41,6 @@ function Index() {
     navigate({ search: { tab: t }, replace: true, resetScroll: false });
     document.getElementById("tableau")?.scrollIntoView({ behavior: "smooth" });
   };
-  const live = DATASETS.filter((d) => d.live).length;
-  const stats = [
-    { icon: Database, label: "Jeux de données catalogués", value: DATASETS.length, note: `${live} interrogeables en direct` },
-    { icon: Layers, label: "Catégories", value: CATEGORIES.length, note: "Physique, biogéochimie, satellite" },
-    { icon: CalendarRange, label: "Archive la plus ancienne", value: "1950", note: "Début de recherche (ERSST dès 1854)" },
-    { icon: Radio, label: "Sources publiques connectées", value: 5, note: "NOAA · ERA5 · Argo · Copernicus · OpenAlex" },
-  ];
   return (
     <main>
       <section className="relative overflow-hidden">
