@@ -15,7 +15,6 @@ import temperatureImage from "@/assets/theme-temperature.jpg";
 import archivesImage from "@/assets/theme-archives.jpg";
 import libraryImage from "@/assets/theme-library.jpg";
 import { Button } from "@/components/ui/button";
-import { DATASETS } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
