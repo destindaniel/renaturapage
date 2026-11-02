@@ -3,17 +3,14 @@ import { BarChart3, Satellite } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Archives } from "@/components/sections/ArchivesSection";
 import { Compare } from "@/components/sections/CompareSection";
-import { Library } from "@/components/sections/LibrarySection";
 import { Sources } from "@/components/sections/SourcesSection";
-import { QuickGuide } from "@/components/QuickGuide";
 
-const TABS = ["archives", "comparaisons", "bibliotheque", "sources"] as const;
+const TABS = ["archives", "comparaisons", "sources"] as const;
 type Tab = (typeof TABS)[number];
-import { Database, Thermometer, Waves, BookOpen } from "lucide-react";
+import { Database, Thermometer, Waves } from "lucide-react";
 import hero from "@/assets/hero-ocean.jpg";
 import temperatureImage from "@/assets/theme-temperature.jpg";
 import archivesImage from "@/assets/theme-archives.jpg";
-import libraryImage from "@/assets/theme-library.jpg";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -50,9 +47,6 @@ function Index() {
           <p className="mt-3 max-w-xl font-semibold opacity-90">Recherche, surveillance et archivage océanographique pour Pointe-Noire et le golfe de Guinée.</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button size="lg" onClick={() => go("archives")}>Explorer les données</Button>
-            <Button size="lg" variant="outline" onClick={() => go("bibliotheque")} className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-              Bibliothèque scientifique
-            </Button>
           </div>
         </div>
       </section>
@@ -60,11 +54,10 @@ function Index() {
 
       <section className="mx-auto max-w-6xl px-4 pt-10">
         <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Explorer par thème</h2>
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
           {[
             { icon: Thermometer, image: temperatureImage, alt: "Illustration d’un instrument de mesure océanographique en mer", t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "comparaisons" as const, tag: "Données réelles" },
             { icon: Waves, image: archivesImage, alt: "Illustration d’un flotteur océanographique à la surface de l’océan", t: "Archives océanographiques", d: "15 produits : vagues, salinité, Argo, satellite…", to: "archives" as const, tag: "Catalogue" },
-            { icon: BookOpen, image: libraryImage, alt: "Illustration de publications et d’un microscope de recherche marine", t: "Publications scientifiques", d: "Articles sur le Congo et le golfe de Guinée", to: "bibliotheque" as const, tag: "OpenAlex" },
           ].map((c) => (
             <Button type="button" variant="ghost" key={c.t} onClick={() => go(c.to)} className="panel block h-full overflow-hidden p-0 text-left whitespace-normal transition hover:-translate-y-0.5 hover:bg-card">
               <img src={c.image} alt={c.alt} loading="lazy" width={1088} height={608} className="aspect-video w-full object-cover" />
@@ -79,20 +72,16 @@ function Index() {
         </div>
       </section>
 
-      <QuickGuide />
-
       <section id="tableau" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12">
         <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v }, replace: true, resetScroll: false })}>
           <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-secondary p-1">
             <TabsTrigger value="archives" className="gap-2 font-bold"><Database className="h-4 w-4" />Données & séries</TabsTrigger>
             <TabsTrigger value="comparaisons" className="gap-2 font-bold"><BarChart3 className="h-4 w-4" />Comparateur</TabsTrigger>
-            <TabsTrigger value="bibliotheque" className="gap-2 font-bold"><BookOpen className="h-4 w-4" />Bibliothèque</TabsTrigger>
             <TabsTrigger value="sources" className="gap-2 font-bold"><Satellite className="h-4 w-4" />Sources & flux</TabsTrigger>
           </TabsList>
           <div className="-mx-4">
             <TabsContent value="archives"><Archives /></TabsContent>
             <TabsContent value="comparaisons"><Compare /></TabsContent>
-            <TabsContent value="bibliotheque"><Library /></TabsContent>
             <TabsContent value="sources"><Sources /></TabsContent>
           </div>
         </Tabs>
