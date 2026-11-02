@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Download, Eye, RotateCcw } from "lucide-react";
 import { PageShell } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SeriesChart } from "@/components/SeriesChart";
 import {
