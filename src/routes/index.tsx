@@ -9,7 +9,7 @@ import { QuickGuide } from "@/components/QuickGuide";
 
 const TABS = ["archives", "comparaisons", "bibliotheque", "sources"] as const;
 type Tab = (typeof TABS)[number];
-import { Database, Layers, CalendarRange, Radio, Thermometer, Waves, BookOpen } from "lucide-react";
+import { Database, Thermometer, Waves, BookOpen } from "lucide-react";
 import hero from "@/assets/hero-ocean.jpg";
 import temperatureImage from "@/assets/theme-temperature.jpg";
 import archivesImage from "@/assets/theme-archives.jpg";

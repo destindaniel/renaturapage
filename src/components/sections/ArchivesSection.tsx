@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Download, Eye, RotateCcw, Search } from "lucide-react";
+import { Download, Eye, RotateCcw } from "lucide-react";
 import { PageShell } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
