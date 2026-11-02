@@ -103,10 +103,10 @@ function DatasetDetail({ d, lat, lon, start, end, bbox }: { d: Dataset; lat: num
   );
 }
 
-function LiveSeries({ kind, name, lat, lon, start, end }: { kind: "ersst" | "waves" | "salinity" | "currents"; name: string; lat: number; lon: number; start: number; end: number }) {
+function LiveSeries({ kind, name, lat, lon, start, end }: { kind: "ersst" | "waves" | "salinity" | "currents" | "temperature"; name: string; lat: number; lon: number; start: number; end: number }) {
   const q = useQuery({
     queryKey: [kind, lat, lon, start, end],
-    queryFn: () => (kind === "salinity" || kind === "currents" ? getCopernicusSeries(kind, lat, lon, start, end) : (kind === "ersst" ? getSstSeries : getWaveSeries)({ data: { lat, lon, start, end } })),
+    queryFn: () => (kind === "salinity" || kind === "currents" || kind === "temperature" ? getCopernicusSeries(kind, lat, lon, start, end) : (kind === "ersst" ? getSstSeries : getWaveSeries)({ data: { lat, lon, start, end } })),
     staleTime: 3600_000,
   });
   if (q.isLoading) return <p className="text-sm text-muted-foreground">Chargement de la série depuis la source officielle…</p>;

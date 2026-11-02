@@ -1,6 +1,7 @@
 // Browser-side reader for Copernicus Marine GLORYS12 (GLOBAL_MULTIYEAR_PHY_001_030) monthly means,
 // via the public Copernicus Marine WMTS GetFeatureInfo endpoint (CORS enabled, one value per month and point).
 import type { SeriesResult, YearPoint } from "./ocean.functions";
+import cache from "@/data/glorys-series.json";
 
 const WMTS = "https://wmts.marine.copernicus.eu/teroWmts";
 const DS = "GLOBAL_MULTIYEAR_PHY_001_030/cmems_mod_glo_phy_my_0.083deg_P1M-m_202311";
@@ -37,24 +38,39 @@ async function pool<T>(jobs: (() => Promise<T>)[], size = 12): Promise<T[]> {
   return out;
 }
 
-export type CmemsKind = "salinity" | "currents";
+export type CmemsKind = "salinity" | "currents" | "temperature";
+
+// Pre-computed real GLORYS values (same method as the live query) for the predefined zones, so charts open instantly.
+function cached(kind: CmemsKind, lat: number, lon: number, from: number, to: number): YearPoint[] | null {
+  const c = cache as unknown as { lat_lon: Record<string, [number, number]>; series: Record<string, Record<string, [number, number | null, number][]>> };
+  const zone = Object.keys(c.lat_lon).find((z) => c.lat_lon[z]![0] === lat && c.lat_lon[z]![1] === lon);
+  const rows = zone ? c.series[zone]?.[kind] : undefined;
+  if (!rows) return null;
+  return rows.filter(([y]) => y >= from && y <= to).map(([year, value, n]) => ({ year, value, n }));
+}
 
 export async function getCopernicusSeries(kind: CmemsKind, lat: number, lon: number, start: number, end: number): Promise<SeriesResult> {
   const from = Math.max(FIRST_YEAR, start), to = Math.min(LAST_YEAR, end);
   const base = {
-    units: kind === "salinity" ? "PSU" : "m/s",
+    units: kind === "salinity" ? "PSU" : kind === "temperature" ? "°C" : "m/s",
     source: "Copernicus Marine — GLORYS12V1 (GLOBAL_MULTIYEAR_PHY_001_030), moyennes mensuelles",
-    method: kind === "salinity"
+    method: kind === "temperature"
+      ? "Température de surface (≈0,5 m), moyenne des mois de janvier, avril, juillet et octobre de chaque année"
+      : kind === "salinity"
       ? "Salinité de surface (≈0,5 m), moyenne des mois de janvier, avril, juillet et octobre de chaque année"
       : "Vitesse du courant de surface √(u²+v²) (≈0,5 m), moyenne des mois de janvier, avril, juillet et octobre",
     query: `${WMTS} · ${DS} · ${lat}°, ${lon}°`,
   };
   if (from > to) return { ...base, points: [], missingYears: [], error: "GLORYS12 couvre 1993–2025 uniquement" };
+  const pre = cached(kind, lat, lon, from, to);
+  if (pre && pre.length === to - from + 1) {
+    return { ...base, source: base.source + " — valeurs extraites et enregistrées le " + (cache as { generated: string }).generated, points: pre, missingYears: pre.filter((p) => p.value === null).map((p) => p.year) };
+  }
   const slots: { y: number; m: string }[] = [];
   for (let y = from; y <= to; y++) for (const m of MONTHS) slots.push({ y, m });
   const vals = await pool(slots.map((s) => async () => {
     const t = `${s.y}-${s.m}-01`;
-    if (kind === "salinity") return value("so", lat, lon, t);
+    if (kind !== "currents") return value(kind === "salinity" ? "so" : "thetao", lat, lon, t);
     const [u, v] = await Promise.all([value("uo", lat, lon, t), value("vo", lat, lon, t)]);
     return u === null || v === null ? null : Math.hypot(u, v);
   }));
