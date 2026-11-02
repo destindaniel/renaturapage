@@ -4,7 +4,7 @@
 
 export type DataType = "observation" | "satellite" | "reanalyse" | "modele" | "prevision";
 export type Access = "libre" | "identifiants";
-export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | null;
+export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | "temperature" | null;
 
 export interface Dataset {
   id: string;
@@ -96,10 +96,10 @@ export const DATASETS: Dataset[] = [
     category: "Température océanique en profondeur",
     start: 1993, end: "présent", area: "Global", source: CMEMS,
     type: "reanalyse", units: "°C, PSU, m/s", frequency: "Journalière / mensuelle", resolution: "1/12° (~8 km)", depth: "0–5 700 m (50 niveaux)",
-    quality: "contrôlée", access: "identifiants", live: null,
+    quality: "contrôlée", access: "libre", live: "temperature",
     url: "https://data.marine.copernicus.eu/product/GLOBAL_MULTIYEAR_PHY_001_030/description",
     updated: "Mise à jour annuelle + intérim", description: "Température, salinité, courants et hauteur de mer issus du modèle NEMO assimilant les observations.",
-    limits: "Débute en 1993. Accès via compte Copernicus Marine gratuit (non configuré ici).",
+    limits: "Débute en 1993. Courbe affichée : température de surface, 4 mois par an ; les autres profondeurs restent sur le portail Copernicus.",
     keywords: ["température", "salinité", "courants", "profondeur", "nemo"],
   },
   {
