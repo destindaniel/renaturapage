@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SeriesChart } from "@/components/SeriesChart";
 import {
-  CATEGORIES, CURRENT_YEAR, DATASETS, DEFAULT_FILTERS, SOURCES, TYPE_LABEL, ZONES,
+  CATEGORIES, CURRENT_YEAR, DATASETS, DEFAULT_FILTERS, TYPE_LABEL, ZONES,
   filterDatasets, type Dataset, type Filters, type ZoneKey,
 } from "@/lib/catalog";
 import { getArgoProfiles, getSstSeries } from "@/lib/ocean.functions";
@@ -26,7 +26,6 @@ export function Archives() {
   const results = useMemo(() => filterDatasets(DATASETS, f), [f]);
   const set = <K extends keyof Filters>(k: K, v: Filters[K]) => setF((p) => ({ ...p, [k]: v }));
   const point = zone === "custom" ? custom : ZONES[zone];
-  const active = (Object.keys(f) as (keyof Filters)[]).filter((k) => f[k] !== DEFAULT_FILTERS[k]);
   const years = results.length ? `${Math.min(...results.map((r) => r.start))} – présent` : "—";
 
   return (

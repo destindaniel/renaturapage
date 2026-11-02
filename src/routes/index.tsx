@@ -3,12 +3,11 @@ import { BarChart3, Satellite } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Archives } from "@/components/sections/ArchivesSection";
 import { Compare } from "@/components/sections/CompareSection";
-import { Library } from "@/components/sections/LibrarySection";
 import { Sources } from "@/components/sections/SourcesSection";
 
-const TABS = ["archives", "comparaisons", "bibliotheque", "sources"] as const;
+const TABS = ["archives", "comparaisons", "sources"] as const;
 type Tab = (typeof TABS)[number];
-import { Database, Thermometer, Waves, BookOpen } from "lucide-react";
+import { Database, Thermometer, Waves } from "lucide-react";
 import hero from "@/assets/hero-ocean.jpg";
 import temperatureImage from "@/assets/theme-temperature.jpg";
 import archivesImage from "@/assets/theme-archives.jpg";
