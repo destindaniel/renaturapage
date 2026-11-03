@@ -101,7 +101,7 @@ export async function getCopernicusSeries(kind: CmemsKind, lat: number, lon: num
     return { ...base, points: pre, missingYears: pre.map((p) => p.year), error: "Aucune valeur valide en ce point : il est masqué comme côte ou nuages par le produit. Choisissez la zone « côte du Congo » ou « golfe de Guinée »." };
   }
   if (pre && pre.length === to - from + 1) {
-    const off = kind === "chl" ? (cache as { chl_offshore_pointe_noire?: [number, number] }).chl_offshore_pointe_noire : undefined;
+    const off = kind === "chl" ? (cache as unknown as { chl_offshore_pointe_noire?: [number, number] }).chl_offshore_pointe_noire : undefined;
     if (off && lat === -4.8 && lon === 11.85) base.method += ` — point décalé au large (${off[0]}°, ${off[1]}°, ~25 km) car la bande côtière est masquée par le satellite`;
     return { ...base, source: base.source + " — valeurs extraites et enregistrées le " + (cache as { generated: string }).generated, points: pre, missingYears: pre.filter((p) => p.value === null).map((p) => p.year) };
   }
