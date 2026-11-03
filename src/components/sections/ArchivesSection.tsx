@@ -15,7 +15,8 @@ import { getCopernicusSeries } from "@/lib/copernicus";
 import { seriesToPdf } from "@/lib/series-pdf";
 
 
-const sel = "h-9 rounded-md border border-input bg-card px-2 text-sm";
+const sel = "h-9 rounded-md border border-input bg-card px-2 text-sm font-normal text-foreground";
+const YEARS = Array.from({ length: CURRENT_YEAR - 1950 + 1 }, (_, i) => 1950 + i);
 
 export function Archives() {
   const [f, setF] = useState<Filters>(DEFAULT_FILTERS);
@@ -29,12 +30,29 @@ export function Archives() {
 
   return (
     <PageShell title="Archives océanographiques" subtitle="Recherche de 1950 à la dernière période disponible. Chaque produit affiche sa véritable première année : aucune valeur n'est inventée pour combler les lacunes.">
-      <div className="panel grid gap-3 p-4 md:grid-cols-2">
-        <select className={sel} value={f.category} onChange={(e) => set("category", e.target.value)} aria-label="Catégorie">
-          <option value="">Toutes catégories</option>
-          {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-        </select>
-        <Button variant="outline" onClick={() => { setF(DEFAULT_FILTERS); setZone("pointe-noire"); }}><RotateCcw className="h-4 w-4" />Réinitialiser</Button>
+      <div className="panel grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5">
+        <label className="grid gap-1 text-xs font-bold text-muted-foreground">Catégorie
+          <select className={sel} value={f.category} onChange={(e) => set("category", e.target.value)} aria-label="Catégorie">
+            <option value="">Toutes catégories</option>
+            {CATEGORIES.filter((c) => DATASETS.some((d) => d.category === c)).map((c) => <option key={c}>{c}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-xs font-bold text-muted-foreground">Lieu
+          <select className={sel} value={zone} onChange={(e) => setZone(e.target.value as ZoneKey)} aria-label="Lieu">
+            {(Object.keys(ZONES) as (keyof typeof ZONES)[]).map((k) => <option key={k} value={k}>{ZONES[k].label}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-xs font-bold text-muted-foreground">Année de début
+          <select className={sel} value={f.start} onChange={(e) => { const v = Number(e.target.value); setF((p) => ({ ...p, start: v, end: Math.max(p.end, v) })); }} aria-label="Année de début">
+            {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-xs font-bold text-muted-foreground">Année de fin
+          <select className={sel} value={f.end} onChange={(e) => { const v = Number(e.target.value); setF((p) => ({ ...p, end: v, start: Math.min(p.start, v) })); }} aria-label="Année de fin">
+            {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </label>
+        <Button className="self-end" variant="outline" onClick={() => { setF(DEFAULT_FILTERS); setZone("pointe-noire"); }}><RotateCcw className="h-4 w-4" />Réinitialiser</Button>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">

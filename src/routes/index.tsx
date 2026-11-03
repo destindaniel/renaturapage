@@ -57,7 +57,7 @@ function Index() {
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {[
             { icon: Thermometer, image: temperatureImage, alt: "Illustration d’un instrument de mesure océanographique en mer", t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "comparaisons" as const, tag: "Données réelles" },
-            { icon: Waves, image: archivesImage, alt: "Illustration d’un flotteur océanographique à la surface de l’océan", t: "Archives océanographiques", d: "15 produits : vagues, salinité, Argo, satellite…", to: "archives" as const, tag: "Catalogue" },
+            { icon: Waves, image: archivesImage, alt: "Illustration d’un flotteur océanographique à la surface de l’océan", t: "Archives océanographiques", d: "10 produits : température, vagues, salinité, courants, Argo…", to: "archives" as const, tag: "Catalogue" },
           ].map((c) => (
             <Button type="button" variant="ghost" key={c.t} onClick={() => go(c.to)} className="panel block h-full overflow-hidden p-0 text-left whitespace-normal transition hover:-translate-y-0.5 hover:bg-card">
               <img src={c.image} alt={c.alt} loading="lazy" width={1088} height={608} className="aspect-video w-full object-cover" />
