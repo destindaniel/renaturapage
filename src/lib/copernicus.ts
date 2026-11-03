@@ -38,7 +38,7 @@ async function pool<T>(jobs: (() => Promise<T>)[], size = 12): Promise<T[]> {
   return out;
 }
 
-export type CmemsKind = "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph";
+export type CmemsKind = "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph" | "oisst";
 
 // Other Copernicus Marine products read the same way (layer, surface level, coverage, units, method).
 const EXTRA: Record<"sealevel" | "chl" | "ph", { layer: string; elevation: string | null; first: number; months: string[]; units: string; source: string; method: string }> = {
@@ -59,7 +59,30 @@ function cached(kind: CmemsKind, lat: number, lon: number, from: number, to: num
   return rows.filter(([y]) => y >= from && y <= to).map(([year, value, n]) => ({ year, value, n }));
 }
 
+const OISST_URL = "https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180";
+
+async function getOisst(lat: number, lon: number, start: number, end: number): Promise<SeriesResult> {
+  const from = Math.max(1982, start), to = Math.min(LAST_YEAR, end);
+  const base = { units: "°C", source: "NOAA NCEI — OISST v2.1 (AVHRR, 0,25°) via ERDDAP CoastWatch", method: "Température de surface, moyenne annuelle d'un jour échantillonné tous les 30 jours (12 valeurs/an), cellule 0,25° la plus proche", query: `${OISST_URL} · ${lat}°, ${lon}°` };
+  if (from > to) return { ...base, points: [], missingYears: [], error: "Ce produit couvre 1982–2025 uniquement" };
+  const pre = cached("oisst", lat, lon, from, to);
+  if (pre && pre.length === to - from + 1) return { ...base, source: base.source + " — valeurs extraites et enregistrées le " + (cache as { generated: string }).generated, points: pre, missingYears: pre.filter((p) => p.value === null).map((p) => p.year) };
+  const la = Math.floor(lat / 0.25) * 0.25 + 0.125, lo = Math.floor(lon / 0.25) * 0.25 + 0.125;
+  try {
+    const r = await fetch(`${OISST_URL}.csv?sst%5B(${from}-01-15):30:(${to}-12-31)%5D%5B(0)%5D%5B(${la})%5D%5B(${lo})%5D`);
+    if (!r.ok) throw new Error(String(r.status));
+    const by: Record<number, number[]> = {};
+    for (const line of (await r.text()).split("\n").slice(2)) { const c = line.split(","); const v = Number(c[4]); if (c[4] && Number.isFinite(v)) (by[Number(c[0]!.slice(0, 4))] ??= []).push(v); }
+    const points: YearPoint[] = [];
+    for (let y = from; y <= to; y++) { const v = by[y]; points.push(v?.length ? { year: y, value: Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 1000) / 1000, n: v.length } : { year: y, value: null, n: 0 }); }
+    return { ...base, points, missingYears: points.filter((p) => p.value === null).map((p) => p.year) };
+  } catch (e) {
+    return { ...base, points: [], missingYears: [], error: "Le serveur NOAA ERDDAP n'a pas répondu (" + String(e) + ")" };
+  }
+}
+
 export async function getCopernicusSeries(kind: CmemsKind, lat: number, lon: number, start: number, end: number): Promise<SeriesResult> {
+  if (kind === "oisst") return getOisst(lat, lon, start, end);
   const ex = kind === "sealevel" || kind === "chl" || kind === "ph" ? EXTRA[kind] : null;
   const from = Math.max(ex?.first ?? FIRST_YEAR, start), to = Math.min(LAST_YEAR, end);
   const base = ex ? { units: ex.units, source: ex.source, method: ex.method, query: `${WMTS} · ${ex.layer} · ${lat}°, ${lon}°` } : {
@@ -78,6 +101,8 @@ export async function getCopernicusSeries(kind: CmemsKind, lat: number, lon: num
     return { ...base, points: pre, missingYears: pre.map((p) => p.year), error: "Aucune valeur valide en ce point : il est masqué comme côte ou nuages par le produit. Choisissez la zone « côte du Congo » ou « golfe de Guinée »." };
   }
   if (pre && pre.length === to - from + 1) {
+    const off = kind === "chl" ? (cache as unknown as { chl_offshore_pointe_noire?: [number, number] }).chl_offshore_pointe_noire : undefined;
+    if (off && lat === -4.8 && lon === 11.85) base.method += ` — point décalé au large (${off[0]}°, ${off[1]}°, ~25 km) car la bande côtière est masquée par le satellite`;
     return { ...base, source: base.source + " — valeurs extraites et enregistrées le " + (cache as { generated: string }).generated, points: pre, missingYears: pre.filter((p) => p.value === null).map((p) => p.year) };
   }
   const slots: { y: number; m: string }[] = [];

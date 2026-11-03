@@ -103,7 +103,7 @@ function DatasetDetail({ d, lat, lon, start, end, bbox }: { d: Dataset; lat: num
   );
 }
 
-function LiveSeries({ kind, name, lat, lon, start, end }: { kind: "ersst" | "waves" | "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph"; name: string; lat: number; lon: number; start: number; end: number }) {
+function LiveSeries({ kind, name, lat, lon, start, end }: { kind: "ersst" | "waves" | "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph" | "oisst"; name: string; lat: number; lon: number; start: number; end: number }) {
   const q = useQuery({
     queryKey: [kind, lat, lon, start, end],
     queryFn: () => (kind !== "ersst" && kind !== "waves" ? getCopernicusSeries(kind, lat, lon, start, end) : (kind === "ersst" ? getSstSeries : getWaveSeries)({ data: { lat, lon, start, end } })),
