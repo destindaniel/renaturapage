@@ -13,6 +13,7 @@ import { getArgoProfiles, getSstSeries } from "@/lib/ocean.functions";
 import { getWaves as getWaveSeries } from "@/lib/browser-sources";
 import { getCopernicusSeries } from "@/lib/copernicus";
 import { seriesToPdf } from "@/lib/series-pdf";
+import { CATEGORY_IMAGES } from "@/lib/category-images";
 
 
 const sel = "h-9 rounded-md border border-input bg-card px-2 text-sm font-normal text-foreground";
@@ -71,7 +72,7 @@ export function Archives() {
             <tbody>
               {results.map((d) => (
                 <tr key={d.id} className="border-t border-border align-top">
-                  <td className="p-3"><div className="font-bold">{d.name}</div><div className="text-xs text-muted-foreground">{d.category} · {d.area}</div></td>
+                  <td className="p-3"><div className="flex min-w-[220px] items-start gap-3">{CATEGORY_IMAGES[d.category] && <img src={CATEGORY_IMAGES[d.category]} alt={d.category} loading="lazy" width={96} height={64} className="h-16 w-24 shrink-0 rounded-md object-cover" />}<div><div className="font-bold">{d.name}</div><div className="text-xs text-muted-foreground">{d.category} · {d.area}</div></div></div></td>
                   <td className="p-3 whitespace-nowrap">{d.start} – {d.end}{d.start > 1950 && <div className="text-xs text-warning">Débute après 1950</div>}</td>
                   <td className="p-3">{TYPE_LABEL[d.type]}</td>
                   <td className="p-3">{d.source}<div className="text-xs text-muted-foreground">{d.access === "libre" ? "Accès libre" : "Compte requis"}</div></td>
@@ -102,6 +103,7 @@ function DatasetDetail({ d, lat, lon, start, end, bbox }: { d: Dataset; lat: num
   const s = Math.max(start, d.start);
   return (
     <>
+      {CATEGORY_IMAGES[d.category] && <img src={CATEGORY_IMAGES[d.category]} alt={d.category} width={992} height={672} className="h-40 w-full rounded-md object-cover" />}
       <DialogHeader><DialogTitle className="text-ocean-deep">{d.name}</DialogTitle></DialogHeader>
       <p className="text-sm">{d.description}</p>
       <dl className="grid grid-cols-2 gap-2 text-sm">
