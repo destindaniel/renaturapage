@@ -64,29 +64,28 @@ export function Archives() {
       {results.length === 0 ? (
         <div className="panel mt-4 p-8 text-center text-muted-foreground">Aucun jeu de données ne correspond à ces critères. Élargissez la période ou réinitialisez les filtres.</div>
       ) : (
-        <div className="panel mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-muted text-left text-xs uppercase text-muted-foreground">
-              <tr><th className="p-3">Jeu de données</th><th className="p-3">Période réelle</th><th className="p-3">Type</th><th className="p-3">Source</th><th className="p-3">Unités / résolution</th><th className="p-3" /></tr>
-            </thead>
-            <tbody>
-              {results.map((d) => (
-                <tr key={d.id} className="border-t border-border align-top">
-                  <td className="p-3"><div className="flex min-w-[220px] items-start gap-3">{CATEGORY_IMAGES[d.category] && <img src={CATEGORY_IMAGES[d.category]} alt={d.category} loading="lazy" width={96} height={64} className="h-16 w-24 shrink-0 rounded-md object-cover" />}<div><div className="font-bold">{d.name}</div><div className="text-xs text-muted-foreground">{d.category} · {d.area}</div></div></div></td>
-                  <td className="p-3 whitespace-nowrap">{d.start} – {d.end}{d.start > 1950 && <div className="text-xs text-warning">Débute après 1950</div>}</td>
-                  <td className="p-3">{TYPE_LABEL[d.type]}</td>
-                  <td className="p-3">{d.source}<div className="text-xs text-muted-foreground">{d.access === "libre" ? "Accès libre" : "Compte requis"}</div></td>
-                  <td className="p-3">{d.units}<div className="text-xs text-muted-foreground">{d.resolution} · {d.frequency}</div></td>
-                  <td className="p-3">
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={() => setOpen(d)}><Eye className="h-4 w-4" />Consulter</Button>
-                      {d.downloadUrl && <Button size="sm" variant="outline" asChild><a href={d.downloadUrl} target="_blank" rel="noreferrer"><Download className="h-4 w-4" />Télécharger</a></Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {results.map((d) => (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => setOpen(d)}
+              aria-label={`Voir les courbes : ${d.name}`}
+              className="panel group relative block overflow-hidden p-0 text-left transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <div className="relative aspect-[4/3] w-full overflow-hidden">
+                {CATEGORY_IMAGES[d.category] && (
+                  <img src={CATEGORY_IMAGES[d.category]} alt={d.category} loading="lazy" width={992} height={744} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                )}
+                <div className="hero-overlay absolute inset-0" />
+                <div className="absolute inset-x-0 bottom-0 p-4 text-primary-foreground">
+                  <span className="inline-block rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">{d.category}</span>
+                  <h3 className="mt-2 text-lg font-extrabold leading-tight">{d.name}</h3>
+                  <p className="mt-1 text-xs font-semibold opacity-90">{d.source} · {d.start} – {d.end}</p>
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       )}
 
