@@ -4,7 +4,7 @@
 
 export type DataType = "observation" | "satellite" | "reanalyse" | "modele" | "prevision";
 export type Access = "libre" | "identifiants";
-export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph" | null;
+export type LiveKey = "ersst" | "waves" | "argo" | "salinity" | "currents" | "temperature" | "sealevel" | "chl" | "ph" | "oisst" | null;
 
 export interface Dataset {
   id: string;
@@ -83,7 +83,7 @@ export const DATASETS: Dataset[] = [
     category: "Température de surface de la mer",
     start: 1981, end: "présent", area: "Global", source: "NOAA NCEI",
     type: "satellite", units: "°C", frequency: "Journalière", resolution: "0,25°", depth: "Surface",
-    quality: "contrôlée", access: "libre", live: null,
+    quality: "contrôlée", access: "libre", live: "oisst",
     url: "https://www.ncei.noaa.gov/products/optimum-interpolation-sst",
     downloadUrl: "https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/",
     updated: "Journalière", description: "Analyse combinant capteurs satellitaires AVHRR et observations in situ.",
