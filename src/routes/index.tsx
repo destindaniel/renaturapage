@@ -7,11 +7,8 @@ import { Sources } from "@/components/sections/SourcesSection";
 
 const TABS = ["archives", "comparaisons", "sources"] as const;
 type Tab = (typeof TABS)[number];
-import { Database, Thermometer, Waves } from "lucide-react";
+import { Database } from "lucide-react";
 import hero from "@/assets/hero-ocean.jpg";
-import temperatureImage from "@/assets/theme-temperature.jpg";
-import archivesImage from "@/assets/theme-archives.jpg";
-import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,10 +30,6 @@ function Index() {
   const { tab: raw } = Route.useSearch();
   const tab: Tab = (TABS as readonly string[]).includes(raw ?? "") ? (raw as Tab) : "archives";
   const navigate = Route.useNavigate();
-  const go = (t: Tab) => {
-    navigate({ search: { tab: t }, replace: true, resetScroll: false });
-    document.getElementById("tableau")?.scrollIntoView({ behavior: "smooth" });
-  };
   return (
     <main>
       <section className="relative overflow-hidden">
@@ -45,32 +38,10 @@ function Index() {
         <div className="relative mx-auto max-w-6xl px-4 py-20 text-primary-foreground">
           <h1 className="max-w-2xl text-4xl font-extrabold leading-tight md:text-5xl">Centralisation des données marines du Congo</h1>
           <p className="mt-3 max-w-xl font-semibold opacity-90">Recherche, surveillance et archivage océanographique pour Pointe-Noire et le golfe de Guinée.</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button size="lg" onClick={() => go("archives")}>Explorer les données</Button>
-          </div>
+
         </div>
       </section>
 
-
-      <section className="mx-auto max-w-6xl px-4 pt-10">
-        <h2 className="text-2xl font-extrabold text-ocean-deep md:text-3xl">Explorer par thème</h2>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {[
-            { icon: Thermometer, image: temperatureImage, alt: "Illustration d’un instrument de mesure océanographique en mer", t: "Température depuis 1950", d: "Série NOAA ERSST v5 au large de Pointe-Noire", to: "comparaisons" as const, tag: "Données réelles" },
-            { icon: Waves, image: archivesImage, alt: "Illustration d’un flotteur océanographique à la surface de l’océan", t: "Archives océanographiques", d: "10 produits : température, vagues, salinité, courants, Argo…", to: "archives" as const, tag: "Catalogue" },
-          ].map((c) => (
-            <Button type="button" variant="ghost" key={c.t} onClick={() => go(c.to)} className="panel block h-full overflow-hidden p-0 text-left whitespace-normal transition hover:-translate-y-0.5 hover:bg-card">
-              <img src={c.image} alt={c.alt} loading="lazy" width={1088} height={608} className="aspect-video w-full object-cover" />
-              <div className="p-5">
-              <c.icon className="h-8 w-8 text-primary" />
-              <h3 className="mt-3 text-lg font-bold">{c.t}</h3>
-              <p className="text-sm text-muted-foreground">{c.d}</p>
-              <span className="mt-3 inline-block rounded bg-secondary px-2 py-0.5 text-xs font-bold text-secondary-foreground">{c.tag}</span>
-              </div>
-            </Button>
-          ))}
-        </div>
-      </section>
 
       <section id="tableau" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12">
         <Tabs value={tab} onValueChange={(v) => navigate({ search: { tab: v }, replace: true, resetScroll: false })}>
