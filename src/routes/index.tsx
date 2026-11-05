@@ -36,8 +36,9 @@ function Index() {
         <img src={hero} alt="Océan Atlantique au large de Pointe-Noire" width={1920} height={768} className="absolute inset-0 h-full w-full object-cover" />
         <div className="hero-overlay absolute inset-0" />
         <div className="relative mx-auto max-w-6xl px-4 py-20 text-primary-foreground">
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight md:text-5xl">Mieux connaître notre environnement marin, c'est aussi mieux le protéger.</h1>
-          <p className="mt-4 max-w-2xl text-base font-semibold opacity-90 md:text-lg">Cette plateforme rassemble des données scientifiques sur le milieu marin congolais et les met à la disposition de tous pour explorer, comprendre et partager les connaissances sur notre océan.</p>
+          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight md:text-5xl">Centralisation des données marines du Congo</h1>
+          <p className="mt-5 max-w-3xl text-lg font-bold leading-snug opacity-95 md:text-xl">Mieux connaître notre environnement marin, c'est aussi mieux le protéger.</p>
+          <p className="mt-3 max-w-2xl text-base font-semibold opacity-90 md:text-lg">Cette plateforme rassemble des données scientifiques sur le milieu marin congolais et les met à la disposition de tous pour explorer, comprendre et partager les connaissances sur notre océan.</p>
 
         </div>
       </section>
