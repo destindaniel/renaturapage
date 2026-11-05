@@ -13,10 +13,10 @@ import hero from "@/assets/hero-ocean.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Renatura Congo — Données marines du Congo" },
-      { name: "description", content: "Archives, surveillance et bibliothèque océanographique pour Pointe-Noire et le golfe de Guinée." },
-      { property: "og:title", content: "Renatura Congo — Données marines du Congo" },
-      { property: "og:description", content: "Archives océanographiques depuis 1950, sources scientifiques et bibliothèque pour Pointe-Noire." },
+      { title: "Renatura Congo — Connaître et protéger le milieu marin congolais" },
+      { name: "description", content: "Mieux connaître notre environnement marin, c'est aussi mieux le protéger. Données scientifiques sur le milieu marin congolais, à explorer, comprendre et partager." },
+      { property: "og:title", content: "Renatura Congo — Connaître et protéger le milieu marin congolais" },
+      { property: "og:description", content: "Des données scientifiques sur le milieu marin congolais, mises à la disposition de tous pour explorer, comprendre et partager les connaissances sur notre océan." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -36,8 +36,8 @@ function Index() {
         <img src={hero} alt="Océan Atlantique au large de Pointe-Noire" width={1920} height={768} className="absolute inset-0 h-full w-full object-cover" />
         <div className="hero-overlay absolute inset-0" />
         <div className="relative mx-auto max-w-6xl px-4 py-20 text-primary-foreground">
-          <h1 className="max-w-2xl text-4xl font-extrabold leading-tight md:text-5xl">Centralisation des données marines du Congo</h1>
-          <p className="mt-3 max-w-xl font-semibold opacity-90">Recherche, surveillance et archivage océanographique pour Pointe-Noire et le golfe de Guinée.</p>
+          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight md:text-5xl">Mieux connaître notre environnement marin, c'est aussi mieux le protéger.</h1>
+          <p className="mt-4 max-w-2xl text-base font-semibold opacity-90 md:text-lg">Cette plateforme rassemble des données scientifiques sur le milieu marin congolais et les met à la disposition de tous pour explorer, comprendre et partager les connaissances sur notre océan.</p>
 
         </div>
       </section>
