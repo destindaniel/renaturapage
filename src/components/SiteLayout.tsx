@@ -32,7 +32,10 @@ export function SiteFooter() {
           <span className="flex items-center gap-2"><Clock className="h-4 w-4" />Lun – Ven, 8h – 17h</span>
         </div>
       </div>
-      <div className="border-t border-primary-foreground/15 py-3 text-center text-xs opacity-70">© {new Date().getFullYear()} Renatura — Données citées selon les licences de leurs producteurs.</div>
+      <div className="border-t border-primary-foreground/15 px-4 py-4 text-center">
+        <p className="text-sm font-semibold opacity-95">Cette page a été créée par les lauréats du Hackathon 2026 Océan Durable.</p>
+        <p className="mt-1 text-xs opacity-70">© {new Date().getFullYear()} Renatura — Données citées selon les licences de leurs producteurs.</p>
+      </div>
     </footer>
   );
 }
