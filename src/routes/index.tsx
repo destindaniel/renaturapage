@@ -13,7 +13,7 @@ import hero from "@/assets/hero-ocean.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Renatura Congo — Données marines du Congo" },
+      { title: "Renatura Congo — Connaître et protéger le milieu marin congolais" },
       { name: "description", content: "Mieux connaître notre environnement marin, c'est aussi mieux le protéger. Données scientifiques sur le milieu marin congolais, à explorer, comprendre et partager." },
       { property: "og:title", content: "Renatura Congo — Connaître et protéger le milieu marin congolais" },
       { property: "og:description", content: "Des données scientifiques sur le milieu marin congolais, mises à la disposition de tous pour explorer, comprendre et partager les connaissances sur notre océan." },
