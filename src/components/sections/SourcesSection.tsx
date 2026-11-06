@@ -34,7 +34,7 @@ export function Sources() {
             </li>
           ))}
         </ul>
-        {q.data && <p className="mt-2 text-xs text-muted-foreground">Dernier test : {new Date(q.data.checkedAt).toLocaleString("fr-FR")}</p>}
+        {q.data && <p suppressHydrationWarning className="mt-2 text-xs text-muted-foreground">Dernier test : {new Date(q.data.checkedAt).toLocaleString("fr-FR")}</p>}
       </div>
       <div className="panel mt-4 p-4">
         <h2 className="mb-2 text-lg font-bold">Identifiants à configurer</h2>
