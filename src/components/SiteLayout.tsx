@@ -34,7 +34,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-primary-foreground/15 px-4 py-4 text-center">
         <p className="text-sm font-semibold opacity-95">Cette page a été créée par les lauréats du Hackathon 2026 Océan Durable.</p>
-        <p className="mt-1 text-xs opacity-70">© {new Date().getFullYear()} Renatura — Données citées selon les licences de leurs producteurs.</p>
+        <p suppressHydrationWarning className="mt-1 text-xs opacity-70">© {new Date().getFullYear()} Renatura — Données citées selon les licences de leurs producteurs.</p>
       </div>
     </footer>
   );
