@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Clock } from "lucide-react";
 import type { ReactNode } from "react";
 import logo from "@/assets/renatura-congo-logo.jpg";
+import irsenLogo from "@/assets/irsen-logo.jpg.asset.json";
 
 
 export function SiteHeader() {
@@ -12,6 +13,10 @@ export function SiteHeader() {
           <img src={logo} alt="Renatura Congo" width={88} height={88} className="h-20 w-20 object-contain" />
           <span className="hidden border-l border-border pl-3 text-sm font-semibold text-muted-foreground sm:block">Connaître & protéger<br />notre environnement marin</span>
         </Link>
+        <div className="flex items-center gap-3">
+          <span className="hidden pr-1 text-sm font-semibold text-muted-foreground sm:block">En collaboration<br />avec l'IRSEN</span>
+          <img src={irsenLogo.url} alt="IRSEN — Institut National de Recherche en Sciences Exactes et Naturelles" width={180} height={108} className="h-14 w-auto object-contain sm:h-16" />
+        </div>
       </div>
     </header>
   );
